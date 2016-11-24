@@ -39,7 +39,7 @@ def __randomly_rotate(img):
 
 def preprocess_image(root_folder, outputpath, size, distort):
     """
-    Converts images from 'root_folder' into a byte array where first byte is 
+    Converts images from 'root_folder' into a byte array where first byte is
     a label 0 for cats and 1 for dogs. Afterwards, writes converted images into
     a file with 'outputpath'.
     """
@@ -58,12 +58,10 @@ def preprocess_image(root_folder, outputpath, size, distort):
                     images = [resized]
                     if distort:
                         images.append(__randomly_rotate(resized))
-                        if random.randint(0, 1) == 0:
-                            images.append(cv2.flip(resized, 1))
+                        images.append(cv2.flip(resized, 1))
                     for indx, i in enumerate(images):
                         output_file.write(bytearray([label]) + bytearray(np.array(i).flatten()))
                         counter += 1
                         if counter % 1000 == 0:
                             print(counter)
     print("Total images: " + str(counter))
-
