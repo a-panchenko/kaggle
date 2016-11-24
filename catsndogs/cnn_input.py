@@ -77,7 +77,7 @@ def inputs(data_files, batch_size, train):
     num_examples_per_epoch = NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN if train else NUM_EXAMPLES_PER_EPOCH_FOR_EVAL
     min_fraction_of_examples_in_queue = 0.4
 
-    min_queue_examples = int(NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN *
+    min_queue_examples = int(num_examples_per_epoch *
                              min_fraction_of_examples_in_queue)
     print('Filling queue with %d images. '
           'This will take a few minutes.' % min_queue_examples)
