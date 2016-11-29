@@ -1,9 +1,9 @@
 import tensorflow as tf
 
 
-IMAGE_SIZE = 227
+IMAGE_SIZE = 64
 
-NUM_CLASSES = 10
+
 NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 50000
 NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 10000
 
@@ -17,8 +17,8 @@ def read_image(filename_queue):
     result = ImageRecord()
 
     label_bytes = 1
-    result.height = 227
-    result.width = 227
+    result.height = IMAGE_SIZE
+    result.width = IMAGE_SIZE
     result.depth = 3
     image_bytes = result.height * result.width * result.depth
     record_bytes = label_bytes + image_bytes
@@ -56,8 +56,8 @@ def _generate_image_and_label_batch(image, label, min_queue_examples,
             batch_size=batch_size,
             num_threads=num_preprocess_threads,
             capacity=min_queue_examples + 3 * batch_size)
-
-    return images, tf.reshape(label_batch, [batch_size])
+        print("Finished shuffle batch")
+    return images, label_batch #tf.reshape(label_batch, [batch_size])
 
 
 def inputs(data_files, batch_size, train):
@@ -75,7 +75,7 @@ def inputs(data_files, batch_size, train):
         reshaped_image = tf.image.per_image_whitening(reshaped_image)
 
     num_examples_per_epoch = NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN if train else NUM_EXAMPLES_PER_EPOCH_FOR_EVAL
-    min_fraction_of_examples_in_queue = 0.4
+    min_fraction_of_examples_in_queue = 0.2
 
     min_queue_examples = int(num_examples_per_epoch *
                              min_fraction_of_examples_in_queue)
