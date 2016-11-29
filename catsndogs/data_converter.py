@@ -60,8 +60,10 @@ def preprocess_image(root_folder, outputpath, size, distort):
                         images.append(__randomly_rotate(resized))
                         images.append(cv2.flip(resized, 1))
                     for indx, i in enumerate(images):
-                        output_file.write(bytearray([label]) + bytearray(np.array(i).flatten()))
-                        counter += 1
+                        b_arr = bytearray([label]) + bytearray(np.array(i).flatten())
+                        if len(b_arr) == size * size * 3 + 1:
+                            output_file.write(b_arr)
+                            counter += 1
                         if counter % 1000 == 0:
                             print(counter)
     print("Total images: " + str(counter))
