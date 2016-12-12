@@ -37,7 +37,7 @@ def __randomly_rotate(img):
     return cv2.warpAffine(img, rotation_matrix, (size, size))
 
 
-def preprocess_image(root_folder, outputpath, size, distort):
+def preprocess_image(root_folder, outputpath, size, train=True):
     """
     Converts images from 'root_folder' into a byte array where first byte is
     a label 0 for cats and 1 for dogs. Afterwards, writes converted images into
@@ -48,22 +48,25 @@ def preprocess_image(root_folder, outputpath, size, distort):
     counter = 0
     with open(outputpath, 'br+') as output_file:
         for root, dirs, filenames in os.walk(root_folder):
-            print(len(filenames))
             for fname in filenames:
                 if fname.endswith('.jpg'):
                     img_path = os.path.join(root, fname)
                     img = cv2.imread(img_path)
                     resized = __resize_and_crop(img, size)
-                    label = 0 if fname.split('.')[0] == 'cat' else 1
-                    images = [resized]
-                    if distort:
-                        images.append(__randomly_rotate(resized))
-                        images.append(cv2.flip(resized, 1))
-                    for indx, i in enumerate(images):
-                        b_arr = bytearray([label]) + bytearray(np.array(i).flatten())
-                        if len(b_arr) == size * size * 3 + 1:
+                    if train:
+                        label = 0 if fname.split('.')[0] == 'cat' else 1
+                        images = [resized, cv2.flip(resized, 1)]
+                        for indx, i in enumerate(images):
+                            b_arr = bytearray([label]) + bytearray(np.array(i).flatten())
+                            if len(b_arr) == size * size * 3 + 1:
+                                output_file.write(b_arr)
+                                counter += 1
+                    else:
+                        b_arr = bytearray(np.array(resized).flatten())
+                        if len(b_arr) == size * size * 3:
                             output_file.write(b_arr)
                             counter += 1
-                        if counter % 1000 == 0:
-                            print(counter)
+                    if counter % 1000 == 0:
+                        print(counter)
     print("Total images: " + str(counter))
+
